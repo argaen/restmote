@@ -7,16 +7,16 @@ from django.conf import settings
 
 logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s')
 
-f = open(settings.RESTMOTE_SNAP_FILE, 'w+')
+f = open(settings.RESTMOTE_SNAP_FILE, 'r+')
 root = urlparse.urljoin(settings.RESTMOTE_HOST+":"+settings.RESTMOTE_PORT, settings.RESTMOTE_API_ROOT)
 get_params = "?" + settings.RESTMOTE_FILTER_FIELD + "=" + f.read().strip()
 
 f.close()
 
 def get_data(url):
-    r = requests.get(url + get_params, timeout=15)
+    r = requests.get(url, timeout=15)
     if r.ok:
-        logging.info(url + get_params)
+        logging.info(url)
         logging.info(r.json())
         return r.json()
     else:
