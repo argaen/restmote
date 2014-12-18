@@ -10,5 +10,6 @@ setup(
     description='Sync django databases from REST API.',
     author='Manu',
     author_email='manu.mirandad@gmail.com',
+    packages=['restmote'],
     install_requires=packages,
 )

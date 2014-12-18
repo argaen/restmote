@@ -7,10 +7,9 @@ from django.conf import settings
 
 logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s')
 
-f = open(settings.RESTMOTE_SNAP_FILE, 'r')
+f = open(settings.RESTMOTE_SNAP_FILE, 'w+')
 root = urlparse.urljoin(settings.RESTMOTE_HOST+":"+settings.RESTMOTE_PORT, settings.RESTMOTE_API_ROOT)
 get_params = "?" + settings.RESTMOTE_FILTER_FIELD + "=" + f.read().strip()
-url = root + get_params
 
 f.close()
 
@@ -50,8 +49,8 @@ def build_objects(obj_class, obj_string, data, field_bindings, nested=[], key=No
 
 
 def sync_objects(url, obj_class, obj_string, field_bindings, nested=[], key=None):
-    data = get_data(url)
-    build_objects(obj_class, obj_string, data, horari_field_bindings, nested, key)
+    data = get_data(root + url + get_params)
+    build_objects(obj_class, obj_string, data, field_bindings, nested, key)
 
 
 # Order IS important!! Care with relationships
