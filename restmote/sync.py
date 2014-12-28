@@ -8,10 +8,11 @@ from django.conf import settings
 logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s')
 
 f = open(settings.RESTMOTE_SNAP_FILE, 'r+')
-root = urlparse.urljoin(settings.RESTMOTE_HOST+":"+settings.RESTMOTE_PORT, settings.RESTMOTE_API_ROOT)
+root = urlparse.urljoin(settings.RESTMOTE_HOST + ":" + settings.RESTMOTE_PORT, settings.RESTMOTE_API_ROOT)
 get_params = "?" + settings.RESTMOTE_FILTER_FIELD + "=" + f.read().strip()
 
 f.close()
+
 
 def get_data(url):
     r = requests.get(url, timeout=15)
@@ -22,14 +23,15 @@ def get_data(url):
     else:
         return []
 
+
 def build_objects(obj_class, obj_string, data, field_bindings, nested=[], key=None):
     for e in data:
 
         try:
             if key:
-                o = obj_class.objects.get(**{'id'+obj_string : e[key]["id"]})
+                o = obj_class.objects.get(**{'id' + obj_string: e[key]["id"]})
             else:
-                o = obj_class.objects.get(**{'id'+obj_string : e["id"]})
+                o = obj_class.objects.get(**{'id' + obj_string: e["id"]})
         except obj_class.DoesNotExist:
             o = obj_class()
 
@@ -40,11 +42,10 @@ def build_objects(obj_class, obj_string, data, field_bindings, nested=[], key=No
             for f in [x for x in e[n] if x in field_bindings]:
                 setattr(o, field_bindings[f], e[n][f])
 
-
         if key:
-            setattr(o, "id"+obj_string, e[key]["id"])
+            setattr(o, "id" + obj_string, e[key]["id"])
         else:
-            setattr(o, "id"+obj_string, e["id"])
+            setattr(o, "id" + obj_string, e["id"])
         o.save()
 
 
@@ -52,6 +53,12 @@ def sync_objects(url, obj_class, obj_string, field_bindings, nested=[], key=None
     data = get_data(root + url + get_params)
     build_objects(obj_class, obj_string, data, field_bindings, nested, key)
 
+
+def remove_objects(url, obj_class, obj_string):
+    remote_ids = get_data(root + url)
+    local_ids = obj_class.objects.values_list('id' + obj_string, flat=True)
+    must_remove = list(set(local_ids).difference(remote_ids))
+    obj_class.objects.filter(**{'id' + obj_string + '__in': must_remove}).delete()
 
 # Order IS important!! Care with relationships
 
