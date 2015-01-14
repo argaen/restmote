@@ -4,7 +4,7 @@ packages = [ 'Django', ]
 
 setup(
     name="restmote",
-    version="0.1.2",
+    version="0.1.3",
     url='http://github.com/argaen/restmote',
     license='Apache 2.0',
     description='Sync local databases from REST API.',

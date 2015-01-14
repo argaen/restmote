@@ -56,7 +56,7 @@ def remove_objects(url, obj_class, obj_string):
         must_remove = list(set(local_ids).difference(remote_ids))
         obj_class.objects.filter(**{'id' + obj_string + '__in': must_remove}).delete()
         if must_remove:
-            logging.info("Deleted %s: %s" % (obj_string, ', '.join(must_remove)))
+            logging.info("Deleted %s: %s" % (obj_string, ', '.join(str(x) for x in must_remove)))
         return 1
     else:
         return 0
