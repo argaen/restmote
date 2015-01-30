@@ -4,14 +4,13 @@ import urlparse
 
 from django.conf import settings
 
-logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s')
 
 root = urlparse.urljoin(settings.RESTMOTE_HOST + ":" + settings.RESTMOTE_PORT, settings.RESTMOTE_API_ROOT)
 
 
 def get_data(url):
     r = requests.get(url, timeout=15)
-    if r.ok:
+    if r.status_code == 200:
         logging.info(url)
         logging.info(r.json())
         return True, r.json()
