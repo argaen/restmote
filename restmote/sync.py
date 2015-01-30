@@ -9,7 +9,10 @@ root = urlparse.urljoin(settings.RESTMOTE_HOST + ":" + settings.RESTMOTE_PORT, s
 
 
 def get_data(url):
-    r = requests.get(url, timeout=15)
+    if hasattr(settings, "RESTMOTE_USER") and hasattr(settings, "RESTMOTE_PASSWORD"):
+        r = requests.get(url, timeout=15, auth=(settings.RESTMOTE_USER, settings.RESTMOTE_PASSWORD))
+    else:
+        r = requests.get(url, timeout=15)
     if r.status_code == 200:
         logging.info(url)
         logging.info(r.json())
